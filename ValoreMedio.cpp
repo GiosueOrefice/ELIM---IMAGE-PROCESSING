@@ -19,11 +19,11 @@ int main(){
 }
 
 void neighbor3x3(Mat src, Mat& dst) {
-	copyMakeBorder(src, dst, 1, 1, 1, 1,BORDER_CONSTANT, 0);
+	src.copyTo(dst);
 	copyMakeBorder(src, src, 1, 1, 1, 1, BORDER_CONSTANT, 0);
-	for (int i = 1; i < dst.rows-1; i++) {
-		for (int j = 1; j < dst.cols-1; j++) 
-			dst.at<unsigned char>(i, j) = valoreMedio3x3(src, i, j);
+	for (int i = 0; i < dst.rows; i++) {
+		for (int j = 0; j < dst.cols; j++) 
+			dst.at<unsigned char>(i, j) = valoreMedio3x3(src, i+1, j+1);
 	}
 }
 
