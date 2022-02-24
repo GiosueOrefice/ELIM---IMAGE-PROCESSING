@@ -5,7 +5,7 @@ using namespace std;
 using namespace cv;
 
 void neighbor3x3(Mat src, Mat& dst);
-int valoreMedio3x3(Mat dst, int i, int j);
+unsigned char valoreMedio3x3(Mat dst, int i, int j);
 
 int main(){
 	Mat imageSrc = imread("messi5.jpg", IMREAD_GRAYSCALE);
@@ -27,12 +27,12 @@ void neighbor3x3(Mat src, Mat& dst) {
 	}
 }
 
-int valoreMedio3x3(Mat mat,int i, int j) {
+unsigned char valoreMedio3x3(Mat mat,int i, int j) {
 	int sum = 0;
 	for (int k = i - 1; k <= i + 1; k++) {
 		for (int z = j - 1; z <= j + 1; z++)
 			sum += mat.at<unsigned char>(k, z);
 	}
 
-	return int(sum/9);
+	return unsigned char(sum/9);
 }
