@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
     imshow("MY filter2d image", filteredImg);
     waitKey(0);
 
-    //laplaciano 45°
+    //laplaciano 45Â°
     Mat laplacianImg45;
 
     float dataLaplacian45[9] = { 0,1,0,1,-4,1,0,1,0 };
@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
    
     filter2D(image, laplacianImg45, image.type(), kernelLaplacian45);
 
-    //laplaciano 90°
+    //laplaciano 90Â°
     Mat laplacianImg90;
    
     float dataLaplacian90[9] = { 1,1,1,1,-8,1,1,1,1 };
@@ -100,6 +100,14 @@ int main(int argc, char** argv) {
 
     imshow("Magnitudo formula 1", gradMagnitude);
     imshow("Magnitudo formula 2", gradMagnitude2);
+    waitKey(0);
+
+ 
+    Mat sharperImg45 = image + (-1 * laplacianImg45);
+    Mat sharperImg90 = image + (-1 * laplacianImg90);
+
+    imshow("Sharper image laplancian45", sharperImg45);
+    imshow("Sharper image laplancian90", sharperImg90);
     waitKey(0);
 
     return(0);
