@@ -114,10 +114,7 @@ int main(int argc, char** argv) {
     pow(sobelImg_x, 2, sobelImg_y);
     pow(sobelImg_y, 2, sobelImg_y);
     sqrt(sobelImg_y + sobelImg_y, gradMagnitude2);
-    cout << "confronto xy utilizzando somma valore assoluto" << endl;
-    checkMat(gradMagnitude, sobelxy);
-    cout << "confronto xy utilizzando l'altra" << endl;
-    checkMat(gradMagnitude2, sobelxy);
+  
     imshow("Magnitudo formula 1", gradMagnitude);
     imshow("Magnitudo formula 2", gradMagnitude2);
     waitKey(0);
