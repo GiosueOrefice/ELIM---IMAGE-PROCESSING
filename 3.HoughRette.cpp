@@ -23,7 +23,7 @@ void hough(Mat src, Mat& dst, int threshold)
 
     // passo 4: inizializzare la matrice dei "voti" (Condiviso tra i punti che saranno sinusoidi nello spazio dei paramentri)
     Mat H;
-    H = Mat::zeros(d * 2, 180, CV_32FC1); // sulle righe abbiamo rho (2*lung.massima considera pos+neg), sulle colonne abbiamo theta (0,180° -> 0,2pi);
+    H = Mat::zeros(d * 2, 180, CV_32FC1); // sulle righe abbiamo rho (2*lung.massima considera pos+neg), sulle colonne abbiamo theta (0,180Â° -> 0,2pi);
 
     // passo 5: fase di voto 
     for (int x = 0; x < canny.rows; x++)
@@ -32,7 +32,7 @@ void hough(Mat src, Mat& dst, int threshold)
         {
             if (canny.at<uchar>(x, y) == 255) // scansione di ogni pixel di edge (bianco -> 255)
             {// per ogni punto, si controlla se la sinusoide rappresentante nello spazio dei parametri ricade nei punti dello spazio (matrice) dei voti
-                for (theta = 0; theta < 180; theta++) // per ogni 0,2pi -> 0,180°
+                for (theta = 0; theta < 180; theta++) // per ogni 0,2pi -> 0,180Â°
                 {
                     double angolo = (theta - 90) * CV_PI / 180; // caolco angolo -> radianti 
                     rho = y * cos(angolo) + x * sin(angolo); // calcolo rho = y*cos(angolo)+x*sin(angolo)
