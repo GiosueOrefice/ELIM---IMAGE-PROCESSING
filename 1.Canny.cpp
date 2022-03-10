@@ -9,14 +9,14 @@ Mat isteresi(Mat src, int lth, int hth) {
 	Mat dst = Mat::zeros(src.rows, src.cols, CV_8U);
 	for (int i = 1; i < src.rows; i++) {
 		for (int j = 1; j < src.cols; j++) {
-			if (src.at<uchar>(i, j) > hth) //Se il valore del pixel è maggiore della soglia alta diventa un edge forte
+			if (src.at<uchar>(i, j) > hth) //Se il valore del pixel Ã¨ maggiore della soglia alta diventa un edge forte
 				dst.at<uchar>(i, j) = 255;
-			else if (src.at<uchar>(i, j) < lth) //Se il valore del pixel è minore della soglia bassa viene eliminato
+			else if (src.at<uchar>(i, j) < lth) //Se il valore del pixel Ã¨ minore della soglia bassa viene eliminato
 				dst.at<uchar>(i, j) = 0;
-			else if (src.at<uchar>(i, j) >= lth && src.at<uchar>(i, j) <= hth) { //IL valore del pixel si trova tra le due soglie, quindi è un edge debole
+			else if (src.at<uchar>(i, j) >= lth && src.at<uchar>(i, j) <= hth) { //IL valore del pixel si trova tra le due soglie, quindi Ã¨ un edge debole
 				for (int x = -1; x <= 1; x++) {
 					for (int y = -1; y <= 1; y++) { //Controllo i valori nel suo intorno 3x3
-						if (src.at<uchar>(i + x, j + y) > hth) //Se il loro valore è maggiore della soglia alta
+						if (src.at<uchar>(i + x, j + y) > hth) //Se il loro valore Ã¨ maggiore della soglia alta
 							dst.at<uchar>(i + x, j + y) = 255; //vengono promossi a punti di edge forti
 					}
 				}
@@ -39,7 +39,7 @@ Mat nonMaximaSuppression(Mat magnitudo, Mat orientation) {
 				if (mag > magnitudo.at<uchar>(i, j - 1) && mag > magnitudo.at<uchar>(i, j + 1))
 					dst.at<uchar>(i, j) = magnitudo.at<uchar>(i, j);
 			}
-			else if (((angolo > -67.5) && (angolo <= -22.5)) || ((angolo > 112.5) && (angolo <= 157.5))) { //+45°
+			else if (((angolo > -67.5) && (angolo <= -22.5)) || ((angolo > 112.5) && (angolo <= 157.5))) { //+45Â°
 				if (mag > magnitudo.at<uchar>(i - 1, j - 1) && mag > magnitudo.at<uchar>(i + 1, j + 1))
 					dst.at<uchar>(i, j) = magnitudo.at<uchar>(i, j);
 			}
@@ -47,7 +47,7 @@ Mat nonMaximaSuppression(Mat magnitudo, Mat orientation) {
 				if (mag > magnitudo.at<uchar>(i - 1, j) && mag > magnitudo.at<uchar>(i + 1, j))
 					dst.at<uchar>(i, j) = magnitudo.at<uchar>(i, j);
 			}
-			else if (((angolo > -157.5) && (angolo <= -112.5)) || ((angolo > 22.5) && (angolo <= 67.5))) { //-45°
+			else if (((angolo > -157.5) && (angolo <= -112.5)) || ((angolo > 22.5) && (angolo <= 67.5))) { //-45Â°
 				if (mag > magnitudo.at<uchar>(i + 1, j - 1) && mag > magnitudo.at<uchar>(i - 1, j + 1))
 					dst.at<uchar>(i, j) = magnitudo.at<uchar>(i, j);
 			}
@@ -60,10 +60,10 @@ Mat nonMaximaSuppression(Mat magnitudo, Mat orientation) {
 I risultati dipendono da alcuni parametri :
 	-ampiezza della gaussiana nella prima fase
 	-Dimensione del filtro nella prima fase
-	-T1 e T2 – soglie per l’isteresi nell’ultima fase(lth e hth) 
+	-T1 e T2 â€“ soglie per lâ€™isteresi nellâ€™ultima fase(lth e hth) 
 */
 void myCanny(Mat src, Mat& dst, int k_size, int lth, int hth) {
-	// 1. Smoothing gaussiano dell’immagine
+	// 1. Smoothing gaussiano dellâ€™immagine
 	Mat gauss;
 	GaussianBlur(src, gauss, Size(5, 5), 0, 0);
 	//2. Calcolo del gradiente
@@ -73,10 +73,10 @@ void myCanny(Mat src, Mat& dst, int k_size, int lth, int hth) {
 	magnitude(sob_x, sob_y, magnitudo); //Calcolo la magnitudine
 	normalize(magnitudo, magnitudo, 0, 255, NORM_MINMAX, CV_8U); // Normalizzare
 
-	// 3.Soppressione dei non - massimi in direzione ortogonale all’edge
+	// 3.Soppressione dei non - massimi in direzione ortogonale allâ€™edge
 	
 	//Calcolo le direzioni del gradiente
-	// phase è uguale ad atan(arg), ma quest'ultima ritorna sia positivi che negativi, phase solo positivi (0 - 359)
+	// phase Ã¨ uguale ad atan(arg), ma quest'ultima ritorna sia positivi che negativi, phase solo positivi (0 - 359)
 	Mat orientation;
 	phase(sob_x, sob_y, orientation, true);
 
