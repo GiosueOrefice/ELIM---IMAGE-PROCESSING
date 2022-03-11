@@ -8,7 +8,7 @@ using namespace std;
 
 void hough(Mat src, Mat& dst, int threshold)
 {
-    double theta, rho, t;
+    double theta, rho, t,angolo;
     Mat canny, gauss;
 
     // passo 1: sfocare
@@ -23,7 +23,7 @@ void hough(Mat src, Mat& dst, int threshold)
 
     // passo 4: inizializzare la matrice dei "voti" (Condiviso tra i punti che saranno sinusoidi nello spazio dei paramentri)
     Mat H;
-    H = Mat::zeros(d * 2, 180, CV_32FC1); // sulle righe abbiamo rho (2*lung.massima considera pos+neg), sulle colonne abbiamo theta (0,180° -> 0,2pi);
+    H = Mat::zeros(d * 2, 180, CV_8U); // sulle righe abbiamo rho (2*lung.massima considera pos+neg), sulle colonne abbiamo theta (0,180° -> 0,2pi);
 
     // passo 5: fase di voto 
     for (int x = 0; x < canny.rows; x++)
@@ -34,10 +34,9 @@ void hough(Mat src, Mat& dst, int threshold)
             {// per ogni punto, si controlla se la sinusoide rappresentante nello spazio dei parametri ricade nei punti dello spazio (matrice) dei voti
                 for (theta = 0; theta < 180; theta++) // per ogni 0,2pi -> 0,180°
                 {
-                    double angolo = (theta - 90) * CV_PI / 180; // caolco angolo -> radianti 
-                    rho = y * cos(angolo) + x * sin(angolo); // calcolo rho = y*cos(angolo)+x*sin(angolo)
-                   
-                    H.at<float>(0, theta)++; // incrementa voto rho, theta
+                    angolo = (theta - 90) * CV_PI / 180; // caolco angolo -> radianti 
+                    rho = (double) (y*cos(angolo) + x*sin(angolo)); // calcolo rho = y*cos(angolo)+x*sin(angolo)
+                    H.at<uchar>((int)abs(rho), theta)++; // incrementa voto rho, theta
                 }
             }
         }
@@ -61,7 +60,7 @@ void hough(Mat src, Mat& dst, int threshold)
                 cos_t = cos(t); // cos
                 Point pt1(cvRound(x + d * (-sin_t)), cvRound(y + d * cos_t)); //trova punto sapendo la formula x/y = d * (-sin_t/cos_t)
                 Point pt2(cvRound(x - d * (-sin_t)), cvRound(y - d * cos_t)); //trova punto sapendo la formula x/y = -d * (-sin_t/cos_t)
-                line(dst, pt1, pt2, Scalar(150), 2, 0); // traccia la linea
+                line(dst, pt1, pt2, Scalar(0), 2, 0); // traccia la linea
             }
         }
     }
@@ -75,9 +74,9 @@ int main(int argc, char** argv)
     if (!src.data)
         return -1;
     Mat dst;
-    hough(src, dst, 100);
+    hough(src, dst, 40);
     imshow("Immagine originale", src);
-    //imshow("dst", dst);
+    imshow("dst", dst);
     waitKey(0);
     destroyAllWindows();
     return 0;
