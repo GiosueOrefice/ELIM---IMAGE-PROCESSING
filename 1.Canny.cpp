@@ -34,22 +34,22 @@ Mat nonMaximaSuppression(Mat magnitudo, Mat orientation) {
 			//normalizziamo l'angolo perche' abbiamo usato phase invece di atan()
 		   //se e' maggiore di 180 sottraiamo 360 per avere valori minori di zero
 			angolo = angolo > 180 ? angolo - 360 : angolo;
-
-			if (((angolo > -22.5) && (angolo <= 22.5)) || ((angolo > 157.5) && (angolo <= -157.5))) { //VERTICALE
+			cout << angolo << endl;
+			if (((angolo > -22.5) && (angolo <= 22.5)) || ((angolo > 157.5) || (angolo <= -157.5))) { //VERTICALE
 				if (mag > magnitudo.at<uchar>(i, j - 1) && mag > magnitudo.at<uchar>(i, j + 1))
-					dst.at<uchar>(i, j) = magnitudo.at<uchar>(i, j);
+					dst.at<uchar>(i, j) = mag;
 			}
 			else if (((angolo > -67.5) && (angolo <= -22.5)) || ((angolo > 112.5) && (angolo <= 157.5))) { //+45°
 				if (mag > magnitudo.at<uchar>(i - 1, j - 1) && mag > magnitudo.at<uchar>(i + 1, j + 1))
-					dst.at<uchar>(i, j) = magnitudo.at<uchar>(i, j);
+					dst.at<uchar>(i, j) = mag;
 			}
 			else if (((angolo > -112.5) && (angolo <= -67.5)) || ((angolo > 67.5) && (angolo <= 112.5))) { //ORIZZONTALE
 				if (mag > magnitudo.at<uchar>(i - 1, j) && mag > magnitudo.at<uchar>(i + 1, j))
-					dst.at<uchar>(i, j) = magnitudo.at<uchar>(i, j);
+					dst.at<uchar>(i, j) = mag;
 			}
 			else if (((angolo > -157.5) && (angolo <= -112.5)) || ((angolo > 22.5) && (angolo <= 67.5))) { //-45°
 				if (mag > magnitudo.at<uchar>(i + 1, j - 1) && mag > magnitudo.at<uchar>(i - 1, j + 1))
-					dst.at<uchar>(i, j) = magnitudo.at<uchar>(i, j);
+					dst.at<uchar>(i, j) = mag;
 			}
 		}
 	}
