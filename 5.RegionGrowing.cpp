@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
 
     if (image.rows > 600 || image.cols > 600) {
         resize(image, image, Size(0, 0), 0.5, 0.5);
-        //Resize per velocit‡
+        //Resize per velocit√†
     }
     imshow("Immagine originale", image);
     GaussianBlur(image, image, Size(5, 5), 0, 0);
@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
     int myThreshold = 4;
 
     int min_region_area = (min_region_area_factor * image.cols * image.rows);
-    //Size dell'area pi˘ piccola che vogliamo considerare
+    //Size dell'area pi√π piccola che vogliamo considerare
 
     uchar label = 1; //Label di ogni area della nostra immagine
 
@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
                 growRegion(image, dest, mask, Point(y, x), myThreshold);
 
                 int mask_area = (int)sum(mask).val[0];  //Prendiamo l'area (numero di pixel) della regione
-                if (mask_area > min_region_area) {        //Se Ë abbastanza grande
+                if (mask_area > min_region_area) {        //Se √® abbastanza grande
                     label += jumpValueLabel;
                     dest += mask * label;               //Allora la registriamo
                     cv::imshow("mask", mask * 255);
@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
                 }
                 else
                 {
-                    dest += mask * 255;                 //Se Ë troppo piccola la registriamo come ignorata
+                    dest += mask * 255;                 //Se √® troppo piccola la registriamo come ignorata
                 }
 
             }
@@ -107,14 +107,14 @@ void growRegion(Mat& src, Mat& dest, Mat& mask, Point seed, int threshold) {
             if (curr_point.x < 0 || curr_point.y < 0 || curr_point.x > src.rows - 1 || curr_point.y > src.cols - 1) {//Se sfora i range dell'immagine
                 continue;//Passa al prossimo punto
             }
-            else {//Altrimenti se Ë nei giusti range
+            else {//Altrimenti se √® nei giusti range
                 uchar delta = (uchar)abs(src.at<uchar>(center) - src.at<uchar>(curr_point));
 
                 if (delta < threshold
-                    && dest.at<uchar>(curr_point) == 0 //Non Ë stato ancora etichettato
-                    && mask.at<uchar>(curr_point) == 0) //Non Ë stato ancora inserito nella regione
+                    && dest.at<uchar>(curr_point) == 0 //Non √® stato ancora etichettato
+                    && mask.at<uchar>(curr_point) == 0) //Non √® stato ancora inserito nella regione
                 {
-                    //Se il predicato  Ë vero, se il punto non fa gi‡ parte di questa o di un'altra regione
+                    //Se il predicato  √® vero, se il punto non fa gi√† parte di questa o di un'altra regione
                     //allora possiamo proseguire
                     mask.at<uchar>(curr_point) = 1;
                     point_stack.push(curr_point);
