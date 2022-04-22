@@ -17,7 +17,7 @@ Mat isteresi(Mat src, int lth, int hth) {
 				for (int x = -1; x <= 1; x++) {
 					for (int y = -1; y <= 1; y++) { //Controllo i valori nel suo intorno 3x3
 						if (src.at<uchar>(i + x, j + y) > hth) //Se il loro valore è maggiore della soglia alta
-							dst.at<uchar>(i + x, j + y) = 255; //vengono promossi a punti di edge forti
+							dst.at<uchar>(i , j) = 255; //vengono promossi a punti di edge forti
 					}
 				}
 			}
@@ -27,14 +27,14 @@ Mat isteresi(Mat src, int lth, int hth) {
 }
 Mat nonMaximaSuppression(Mat magnitudo, Mat orientation) {
 	Mat dst = Mat::zeros(magnitudo.rows, magnitudo.cols, CV_8U);
-	for (int i = 1; i < magnitudo.rows; i++) {
-		for (int j = 1; j < magnitudo.cols; j++) {
+	for (int i = 1; i < magnitudo.rows-1; i++) {
+		for (int j = 1; j < magnitudo.cols-1; j++) {
 			float mag = magnitudo.at<uchar>(i, j);
 			float angolo = orientation.at<float>(i, j);
 			//normalizziamo l'angolo perche' abbiamo usato phase invece di atan()
-		   //se e' maggiore di 180 sottraiamo 360 per avere valori minori di zero
+		    //se e' maggiore di 180 sottraiamo 360 per avere valori minori di zero
 			angolo = angolo > 180 ? angolo - 360 : angolo;
-			cout << angolo << endl;
+			
 			if (((angolo > -22.5) && (angolo <= 22.5)) || ((angolo > 157.5) || (angolo <= -157.5))) { //VERTICALE
 				if (mag > magnitudo.at<uchar>(i, j - 1) && mag > magnitudo.at<uchar>(i, j + 1))
 					dst.at<uchar>(i, j) = mag;
@@ -91,12 +91,19 @@ void myCanny(Mat src, Mat& dst, int k_size, int lth, int hth) {
 int main(int argc, char** argv) {
 	
 	int kernel_size = 3;
-	Mat src = imread("eye.jpeg", IMREAD_GRAYSCALE), dst;
+	Mat src = imread("blox.jpg", IMREAD_GRAYSCALE), dst;
 	if (!src.data) return -1;
 	int lth = 25;
 	int hth = 35;
+	/*Canny originale, applico prima gaussian blur*/
+	Mat canny;
+	GaussianBlur(src, canny, Size(5, 5), 0, 0);
+	Canny(canny, canny, hth, lth);
+
 	myCanny(src, dst, kernel_size, lth, hth);
+
 	imshow("Input", src);
+	imshow("canny original", canny);
 	imshow("Output", dst);
 	waitKey(0);
 	return 0;
