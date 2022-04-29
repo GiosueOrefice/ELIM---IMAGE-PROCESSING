@@ -31,13 +31,13 @@ Region split(Mat src, Rect area){
 
     // passo 1 -> controllo predicato della regione, vero? rimango, falso? split
     if (predicate(src))
-    {// Se il predicato è vero, la regione NON può essere separata
+    {// Se il predicato Ã¨ vero, la regione NON puÃ² essere separata
         Scalar mean, stddev;
         meanStdDev(src, mean, stddev); // calcolo media (deviazione standard)
         R.label = mean; // assegno come label la media dev_std.
     }
     else
-    {// Se il predicato è falso, la regione DEVE essere separata
+    {// Se il predicato Ã¨ falso, la regione DEVE essere separata
         int w = src.cols / 2;
         int h = src.rows / 2;
         Region r1 = split(src(Rect(0, 0, w, h)), Rect(area.x, area.y, w, h)); // eseguo split rettangolo up-left
@@ -61,7 +61,7 @@ void mergeRegion(Mat src, Region& r1, Region& r2){
         Rect r12 = r1.area | r2.area;
         // passo 2 -> si controlla che le regioni unite rispettino il predicato
         if (predicate(src(r12)))
-        { // Se rispettano, le la regione 1 sarà equivalente a reg1 + reg2 
+        { // Se rispettano, le la regione 1 sarÃ  equivalente a reg1 + reg2 
             r1.area = r12;
             r1.label = (r1.label + r2.label) / 2;
             r2.valid = false;
@@ -74,7 +74,7 @@ void merge(Mat src, Region& r)
 {
     // passo 1 -> controlla se ci sono rettangoli figli,
     if ((int)r.child.size() > 0)
-    { // Controlla se è possibile unire le regioni
+    { // Controlla se Ã¨ possibile unire le regioni
         mergeRegion(src, r.child.at(0), r.child.at(1));
         mergeRegion(src, r.child.at(2), r.child.at(3));
         mergeRegion(src, r.child.at(0), r.child.at(2));
@@ -86,7 +86,7 @@ void merge(Mat src, Region& r)
 
 void display(Mat& out, Region R)
 {
-    // passo 0 -> Se la regione master non ha sotto-regioni e la regione master è valida
+    // passo 0 -> Se la regione master non ha sotto-regioni e la regione master Ã¨ valida
     // passo 1 ->  disegna un rettangolo.
     if ((int)R.child.size() == 0 && R.valid)
         rectangle(out, R.area, R.label, FILLED); // Area=Zona di interesse; Label=Colore; FILLED = Tipo di rettangolo
@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
     }
     img = src;
 
-    // passo 1: Dividi l'immagine. (Il rettangolo inziale dato come argomento è l'intera immagine).
+    // passo 1: Dividi l'immagine. (Il rettangolo inziale dato come argomento Ã¨ l'intera immagine).
     Region r = split(src, Rect(0, 0, src.cols, src.rows));
 
     // passo 2: richiama la funzione merge
