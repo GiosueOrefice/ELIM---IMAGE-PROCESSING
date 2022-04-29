@@ -49,11 +49,11 @@ void myKmeans(Mat& src, Mat& dst, int nClusters)
         {
             for (int y = 0; y < src.cols; y++)
             {
-                // Calcolo le differenza di intensità da ogni centro dei cluster e posiziono il pixel nel cluster con differenza di intensità minima
+                // Calcolo le differenza di intensitÃ  da ogni centro dei cluster e posiziono il pixel nel cluster con differenza di intensitÃ  minima
                 double minDistance = INFINITY;
                 int clusterIndex = 0;
                 Point pixel(y, x);
-                //Calcolo differeza di intensità di ogni pixel rispetto ad ogni cluster (centri)
+                //Calcolo differeza di intensitÃ  di ogni pixel rispetto ad ogni cluster (centri)
                 for (int k = 0; k < nClusters; k++)
                 {
                     Scalar center = centers_colors[k];
@@ -95,7 +95,7 @@ void myKmeans(Mat& src, Mat& dst, int nClusters)
             Scalar center = centers_colors[k];
             Scalar newCenter(blue, green, red);
             cout << "center: " << center << endl;
-            //sommo la differenza di intensità tra i nuovi centri e vecchi 
+            //sommo la differenza di intensitÃ  tra i nuovi centri e vecchi 
             newCenterSum += myDistance(newCenter, center); 
             // Aggiorno il nuovo centro
             centers_colors[k] = newCenter;
