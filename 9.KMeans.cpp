@@ -79,7 +79,7 @@ void myKmeans(Mat& src, Mat& dst, int nClusters)
         {
             vector<Point> clusterPoints = clusters[k];
             double blue = 0, green = 0, red = 0;
-            cout << "Numero di pixel nel cluster " <<k<<": " << clusterPoints.size() << endl;
+            //cout << "Numero di pixel nel cluster " <<k<<": " << clusterPoints.size() << endl;
             for (int i = 0; i < clusterPoints.size(); i++)
             {
                 Point pixel = clusterPoints[i];
@@ -94,7 +94,7 @@ void myKmeans(Mat& src, Mat& dst, int nClusters)
             // Calcolo la distanza del nuovo centro dal vecchio e aggiungo a newCenterSum
             Scalar center = centers_colors[k];
             Scalar newCenter(blue, green, red);
-            cout << "center: " << center << endl;
+            //cout << "center: " << center << endl;
             //sommo la differenza di intensità tra i nuovi centri e vecchi 
             newCenterSum += myDistance(newCenter, center); 
             // Aggiorno il nuovo centro
@@ -102,7 +102,7 @@ void myKmeans(Mat& src, Mat& dst, int nClusters)
         }
         newCenterSum /= nClusters; //media delle differenze tra i vecchi e nuovi center 
         difference = abs(oldCenterSum - newCenterSum); 
-        cout << "Differenza " << difference << endl<<endl;
+        //cout << "Differenza " << difference << endl<<endl;
         oldCenterSum = newCenterSum;
     }
 
@@ -122,10 +122,89 @@ void myKmeans(Mat& src, Mat& dst, int nClusters)
     }
 }
 
+double myDistance(double p1, double p2) {
+    return pow(p1 - p2, 2);
+}
+
+void kMeansGrayScale(Mat src, Mat& dest, int nClusters) {
+
+    GaussianBlur(src, src, Size(5, 5), 0, 0);
+
+    vector<double> centers;
+    vector<vector<Point>> clusters;
+
+    //
+    for (int k = 0; k < nClusters; k++) {
+        int x = (src.rows) / nClusters * k;
+        int y = (src.cols) / nClusters * k;
+        centers.push_back(src.at<uchar>(x,y));
+        clusters.push_back(vector<Point>());
+    }
+
+    double oldCentersAVG = 0;
+    double difference = INFINITY;
+    double distance;
+    while (difference>0.1){
+
+        for (int k = 0; k < nClusters; k++)
+            clusters[k].clear();
+
+        for (int x = 0; x < src.rows; x++) {
+            for (int y = 0; y < src.cols; y++) {
+                
+                double minDistance = INFINITY;
+                int clusterIndex = 0;
+
+                for (int k = 0; k < nClusters; k++){
+                    distance = myDistance(centers[k],src.at<uchar>(x,y));
+                    if (distance < minDistance){
+                        minDistance = distance;
+                        clusterIndex = k; // Salvo il pixel nel cluster di indice k
+                    }
+                }
+
+                clusters[clusterIndex].push_back(Point(y, x));
+            }
+        }
+
+        // 
+        double newCentersAVG = 0;
+        for (int k = 0; k < nClusters; k++){
+            vector<Point> clusterPoints = clusters[k];
+            double clusterAVG = 0;
+            for (int i = 0; i < clusterPoints.size(); i++)
+                clusterAVG += src.at<uchar>(clusterPoints[i]);
+ 
+            // Calcolo media
+            clusterAVG /= clusterPoints.size();
+     
+            newCentersAVG += myDistance(centers[k], clusterAVG);
+ 
+            // Aggiorno il nuovo centro
+            centers[k] = clusterAVG;
+        }
+        newCentersAVG /= nClusters;
+        difference = abs(oldCentersAVG - newCentersAVG);
+
+        oldCentersAVG = newCentersAVG;
+
+        //Disegno l'immagine di output
+        for (int k = 0; k < nClusters; k++){
+            vector<Point> clusterPoints = clusters[k];
+            for (int i = 0; i < clusterPoints.size(); i++)
+                dest.at<uchar>(clusterPoints[i]) = (int) centers[k];
+        }
+
+
+    }
+
+}
+
 int main(int argc, char* argv[])
 {
  
-    Mat input = imread("lena_color.png");
+    //Mat input = imread("lena_color.png");
+    Mat input = imread("lena_color.png", IMREAD_GRAYSCALE);
     if (input.empty())
     {
         cout << "Can't find image" << endl;
@@ -134,7 +213,8 @@ int main(int argc, char* argv[])
     int nClusters = 10;
 
     Mat dst(input.rows, input.cols, input.type());
-    myKmeans(input, dst, nClusters);
+    //myKmeans(input, dst, nClusters);
+    kMeansGrayScale(input, dst, nClusters);
     imshow("Input image", input);
     imshow("K-Means", dst);
     waitKey(0);
