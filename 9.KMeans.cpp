@@ -128,75 +128,80 @@ double myDistance(double p1, double p2) {
 
 void kMeansGrayScale(Mat src, Mat& dest, int nClusters) {
 
+    // passo 0 -> sfocatura
     GaussianBlur(src, src, Size(5, 5), 0, 0);
 
     vector<double> centers;
     vector<vector<Point>> clusters;
 
-    //
+    // Passo 1 -> Inizializzazione centri
     for (int k = 0; k < nClusters; k++) {
-        int x = (src.rows) / nClusters * k;
-        int y = (src.cols) / nClusters * k;
-        centers.push_back(src.at<uchar>(x,y));
-        clusters.push_back(vector<Point>());
+        int x = src.rows / nClusters * k;
+        int y = src.cols / nClusters * k;
+        centers.push_back(src.at<uchar>(x,y)); //aggiungere il k-esimo centro
+        clusters.push_back(vector<Point>()); //creare il vettore di punti per il k-esemio cluster
     }
 
-    double oldCentersAVG = 0;
+    // Passo 2 ->  Assegno i pixel ai cluster, ricalcolo i centri usando le medie, fino a che differenza < 0.1
+    double oldDistanceCentersAVG = 0;
     double difference = INFINITY;
     double distance;
-    while (difference>0.1){
+    while (difference > 0.1) {
 
         for (int k = 0; k < nClusters; k++)
-            clusters[k].clear();
+            clusters[k].clear(); //pulisce il vector di ogni cluster
 
         for (int x = 0; x < src.rows; x++) {
             for (int y = 0; y < src.cols; y++) {
-                
+
                 double minDistance = INFINITY;
                 int clusterIndex = 0;
 
-                for (int k = 0; k < nClusters; k++){
-                    distance = myDistance(centers[k],src.at<uchar>(x,y));
-                    if (distance < minDistance){
+                for (int k = 0; k < nClusters; k++) {
+                    //calcolo la distanza di ogni pixel rispetto ai centri dei cluster
+                    distance = myDistance(centers[k], src.at<uchar>(x, y));
+                    if (distance < minDistance) { //se la distanza è minore, aggiorno il cluster di appartenenza
                         minDistance = distance;
                         clusterIndex = k; // Salvo il pixel nel cluster di indice k
                     }
                 }
 
-                clusters[clusterIndex].push_back(Point(y, x));
+                clusters[clusterIndex].push_back(Point(y, x)); //aggiungi il pixel al cluster
             }
         }
 
         // 
-        double newCentersAVG = 0;
-        for (int k = 0; k < nClusters; k++){
+        double newDistanceCentersAVG = 0;
+        for (int k = 0; k < nClusters; k++) {
             vector<Point> clusterPoints = clusters[k];
             double clusterAVG = 0;
             for (int i = 0; i < clusterPoints.size(); i++)
-                clusterAVG += src.at<uchar>(clusterPoints[i]);
- 
-            // Calcolo media
+                clusterAVG += src.at<uchar>(clusterPoints[i]); //somma di tutti i pixel del k-esimo cluster
+
+            // Calcolo media del k-esimo cluster
             clusterAVG /= clusterPoints.size();
-     
-            newCentersAVG += myDistance(centers[k], clusterAVG);
- 
+            //calcolo le distanze tra il vecchio centro e la nuova media del k-esimo cluster
+            //vado a sommare tutte queste distanze nella var newCentersAVG
+            newDistanceCentersAVG += myDistance(centers[k], clusterAVG);
             // Aggiorno il nuovo centro
             centers[k] = clusterAVG;
         }
-        newCentersAVG /= nClusters;
-        difference = abs(oldCentersAVG - newCentersAVG);
-
-        oldCentersAVG = newCentersAVG;
-
-        //Disegno l'immagine di output
-        for (int k = 0; k < nClusters; k++){
-            vector<Point> clusterPoints = clusters[k];
-            for (int i = 0; i < clusterPoints.size(); i++)
-                dest.at<uchar>(clusterPoints[i]) = (int) centers[k];
-        }
-
+        newDistanceCentersAVG /= nClusters; //facciamo la media
+        difference = abs(oldDistanceCentersAVG - newDistanceCentersAVG); //differenza tra la vecchia media e la nuova
+     
+        oldDistanceCentersAVG = newDistanceCentersAVG; //aggiorno la media
 
     }
+
+        //Disegno l'immagine di output
+    for (int k = 0; k < nClusters; k++){
+         vector<Point> clusterPoints = clusters[k];
+         for (int i = 0; i < clusterPoints.size(); i++)
+             dest.at<uchar>(clusterPoints[i]) = (int) centers[k];
+    }
+
+
+    
 
 }
 
@@ -210,7 +215,7 @@ int main(int argc, char* argv[])
         cout << "Can't find image" << endl;
         exit(-1);
     }
-    int nClusters = 10;
+    int nClusters = 2;
 
     Mat dst(input.rows, input.cols, input.type());
     //myKmeans(input, dst, nClusters);
